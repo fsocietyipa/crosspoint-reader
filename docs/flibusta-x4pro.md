@@ -124,3 +124,12 @@ index, Cyrillic search, and EPUB acquisition. A 4,581,437-byte EPUB of Pushkin's
 `mimetype` was `application/epub+zip`, and the EPUB container was present.
 Some other requests returned HTTP 500/503, so this does not establish continuous
 service availability or validate the device's Wi-Fi/TLS path.
+
+The 103 focused local tests passed (8 Flibusta tests including the live feed,
+84 stats tests, 11 filename tests). The GitHub workflow also passed its tests
+and both the `x4pro-gh_release` and ESP32-C3 `default` firmware builds:
+[validation run](https://github.com/fsocietyipa/crosspoint-reader/actions/runs/36980250214).
+The preview binary was built from source commit `a542693`; its chip ID is
+ESP32-S3, board tag is `x4pro`, and version is `2.3.0-flibusta.1`.
+SHA-256: `c29aa9c1af5b1eec4d0858233945e21707ebe2bc6da1baa4e4cefe88fb4b43a3`.
+The device acceptance checks above still require physical hardware.

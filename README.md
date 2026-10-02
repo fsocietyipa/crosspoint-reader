@@ -16,6 +16,8 @@ heatmap, current/best streaks, completion celebrations, and finished-book histor
 Credits belong to XPoint, CrossInk, and YACP; these statistics are inherited,
 not newly implemented by this branch.
 
+**Download:** [X4 Pro Preview 1](https://github.com/fsocietyipa/crosspoint-reader/releases/tag/flibusta-x4pro-v2.3.0-1) (firmware + checksum).
+
 **Installation, operation, limitations, and verification:**
 [Custom firmware guide](docs/flibusta-x4pro.md).
 

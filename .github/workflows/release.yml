@@ -20,8 +20,9 @@ name: Compile Release
 
 on:
   push:
-    tags:
-      - '*'
+    # Custom Flibusta releases upload the already-tested X4 Pro artifact.
+    tags-ignore:
+      - 'flibusta-*'
 
 # Cap the PlatformIO Core version the platform's penv bootstrap may install
 # (see .github/pio-constraints.txt). UV_CONSTRAINT reaches the penv's uv pip
