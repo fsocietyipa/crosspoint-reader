@@ -84,6 +84,7 @@ void OpdsParser::clear() {
   currentText.clear();
   inEntry = inTitle = inAuthor = inAuthorName = inId = false;
   collectCurrentEntry = false;
+  hasAcquisitionLink = false;
   feedTruncated = false;
 }
 
@@ -124,6 +125,7 @@ void XMLCALL OpdsParser::startElement(void* userData, const XML_Char* name, cons
     self->collectCurrentEntry = self->entries.size() < MAX_ENTRIES;
     self->feedTruncated = self->feedTruncated || !self->collectCurrentEntry;
     self->currentEntry = OpdsEntry{};
+    self->hasAcquisitionLink = false;
     self->currentText.clear();
     self->inTitle = self->inAuthor = self->inAuthorName = self->inId = false;
     return;
@@ -146,6 +148,7 @@ void XMLCALL OpdsParser::startElement(void* userData, const XML_Char* name, cons
       }
 
       if (self->inEntry && self->collectCurrentEntry) {
+        if (rel && strstr(rel, "opds-spec.org/acquisition") != nullptr) self->hasAcquisitionLink = true;
         if (rel && type && strstr(rel, "opds-spec.org/acquisition") != nullptr &&
             strcmp(type, "application/epub+zip") == 0) {
           // Prefer plain EPUB links over derived formats when multiple
@@ -188,7 +191,11 @@ void XMLCALL OpdsParser::endElement(void* userData, const XML_Char* name) {
   auto* self = static_cast<OpdsParser*>(userData);
 
   if (strcmp(name, "entry") == 0 || strstr(name, ":entry") != nullptr) {
-    if (self->collectCurrentEntry && !self->currentEntry.title.empty() && !self->currentEntry.href.empty()) {
+    // Flibusta's PDF/FB2-only books contain related author feeds. Do not
+    // present those as book downloads or catalog navigation.
+    const bool unsupportedBook = self->hasAcquisitionLink && self->currentEntry.type != OpdsEntryType::BOOK;
+    if (self->collectCurrentEntry && !unsupportedBook && !self->currentEntry.title.empty() &&
+        !self->currentEntry.href.empty()) {
       self->entries.push_back(self->currentEntry);
     }
     self->inEntry = false;

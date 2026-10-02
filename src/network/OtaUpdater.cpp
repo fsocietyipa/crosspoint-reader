@@ -20,19 +20,20 @@
 #include "OtaSignature.h"
 
 namespace {
-// This fork (XPoint) publishes its firmware as GitHub releases on the
-// "Belphemur/XPoint" repo (renamed from crosspoint-x-reader). The updater reads
-// the latest release + a signed manifest attached to it. The manifest is what
-// we actually verify; the firmware is stream-checked against the manifest's
-// signed SHA-256 (not locked/co-signed).
-//
-// OTA_REPO is defined as a build flag in platformio.ini [base] so different
-// builds (e.g. an upstream-synced branch) can point at a different host without
-// touching this file.
+// The release repository is selected by the build. Custom distributions can
+// disable checks with CUSTOM_FIRMWARE_NO_OTA while retaining SD-card updates.
 constexpr char latestReleaseUrl[] = "https://api.github.com/repos/" OTA_REPO "/releases/latest";
 }  // namespace
 
 OtaUpdater::OtaUpdaterError OtaUpdater::checkForUpdate() {
+#ifdef CUSTOM_FIRMWARE_NO_OTA
+  // This custom branch is distributed as SD-card firmware. A stock release
+  // from either parent would silently remove the preset and fork settings.
+  updateAvailable = false;
+  haveExpectedSha = false;
+  LOG_INF("OTA", "Custom firmware: use SD-card updates");
+  return NO_UPDATE;
+#endif
   LOG_DBG("OTA", "Checking for update (current: %s)", CROSSPOINT_VERSION);
 
   // Reset the manifest-derived trust state so a fresh check can't inherit a

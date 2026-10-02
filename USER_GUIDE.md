@@ -362,7 +362,7 @@ The Settings screen allows you to configure the device's behavior. There are a f
 
 - **Rebuild library index**: Rescan the SD card for books while preserving the arrival history of books already in the index.
 
-- **Check for updates**: Check for Crosspoint firmware updates over Wi-Fi. Firmware can also be updated without a USB connection by placing a `firmware.bin` file on the SD card.
+- **Check for updates**: Online firmware checks are disabled in this custom Flibusta build. Place its X4 Pro `firmware.bin` on the SD card and use **SD Card Firmware Update**. See [the custom guide](docs/flibusta-x4pro.md).
 
 - **Language**: Set the UI language. CrossPoint supports 32 languages: English, Spanish, French, German, Czech, Brazilian Portuguese, European Portuguese, Russian, Swedish, Romanian, Catalan, Ukrainian, Belarusian, Italian, Polish, Finnish, Danish, Dutch, Turkish, Kazakh, Hungarian, Lithuanian, Slovenian, Valencian, Hebrew, Arabic, Slovak, Bosnian, Vietnamese, Norwegian Bokmål, Indonesian, and Orangutan.
 

@@ -1,0 +1,64 @@
+name: Flibusta firmware
+
+on:
+  push:
+    branches: [feature/flibusta-reading-stats]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flibusta-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - name: Configure and build focused tests
+        run: |
+          cmake -S test -B build/tests
+          cmake --build build/tests --target FlibustaTest ReadingStatsStoreTest OpdsFilenameTest -j 2
+      - name: Run tests
+        run: |
+          build/tests/flibusta/FlibustaTest
+          build/tests/reading_stats/ReadingStatsStoreTest
+          build/tests/opds_filename/OpdsFilenameTest
+  firmware:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [x4pro-gh_release, default]
+    env:
+      UV_CONSTRAINT: ${{ github.workspace }}/.github/pio-constraints.txt
+      PIP_CONSTRAINT: ${{ github.workspace }}/.github/pio-constraints.txt
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Install build tools
+        run: |
+          pip install https://github.com/pioarduino/platformio-core/archive/refs/tags/v6.2.0.zip
+          pip install 'littlefs-python>=0.16.0' 'fatfs-ng>=0.1.14' 'pyyaml>=6.0.2' \
+            'rich-click>=1.8.6' 'zopfli>=0.2.2' 'intelhex>=2.3.0' 'rich>=14.0.0' 'urllib3<2' \
+            'cryptography>=45.0.3' 'certifi>=2025.8.3' 'ecdsa>=0.19.1' 'bitstring>=4.3.1' \
+            'reedsolo>=1.5.3,<1.8' 'esp-idf-size>=2.0.0' 'esp-coredump>=1.14.0'
+      - uses: actions/cache@v6
+        with:
+          path: ~/.platformio
+          key: flibusta-${{ runner.os }}-${{ matrix.environment }}-${{ hashFiles('platformio.ini') }}
+      - name: Build firmware
+        run: pio run -e ${{ matrix.environment }} -j 2
+      - uses: actions/upload-artifact@v7
+        with:
+          name: flibusta-${{ matrix.environment }}
+          path: .pio/build/${{ matrix.environment }}/firmware.bin
+          if-no-files-found: error

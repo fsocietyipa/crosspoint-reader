@@ -880,7 +880,11 @@ void setup() {
   RECENT_BOOKS.loadFromFile();
   I18N.setLanguage(static_cast<Language>(SETTINGS.language));
   KOREADER_STORE.loadFromFile();
-  OPDS_STORE.loadFromFile();
+  const bool opdsLoaded = OPDS_STORE.loadFromFile();
+  // Never replace an unreadable existing configuration with the preset.
+  if (opdsLoaded || !Storage.exists(OpdsServerStore::getFilePath())) {
+    OPDS_STORE.ensureFlibustaPreset();
+  }
   UITheme::getInstance().reload();
   ButtonNavigator::setMappedInputManager(mappedInputManager);
   pluginevents::refreshSubscriptions();

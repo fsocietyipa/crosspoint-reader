@@ -1,17 +1,37 @@
-# XPoint
+# CrossPoint Flibusta — X4 Pro
 
-![XPoint logo](./docs/images/repo_logo.jpg)
+Custom firmware for the **Xteink X4 Pro**, based on
+[XPoint](https://github.com/Belphemur/XPoint), which is a fork of
+[CrossPoint](https://github.com/crosspoint-reader/crosspoint-reader).
 
-**XPoint** is open-source e-reader firmware for ESP32-based devices — community-built,
-fully hackable, free forever. It is a fork of
-[crosspoint-reader/crosspoint-reader](https://github.com/crosspoint-reader/crosspoint-reader)
-with a focus on the reading experience of the Xteink X4 Pro, plus features the
-upstream project may never take. It is provided as-is, with no warranty.
+This branch adds an editable, anonymous **Flibusta** catalog preset at
+`https://flibusta.is/opds`. Open **OPDS Browser** from Home, select Flibusta
+(if you have other catalogs), browse or search, and fetch an EPUB to your SD card.
+No API token or account is needed for the public catalog. The personal shelf is a
+separate Flibusta feature that requires a login.
 
-> **Coming from official CrossPoint?** Existing devices follow OTA redirects transparently
-> — no manual re-flash is needed. OTA updates in this fork are delivered from this
-> repository's own GitHub releases and verified against an Ed25519 signature shipped with
-> the fork — see [OTA signing](docs/OTA_SIGNING.md).
+Includes XPoint's complete reading statistics: per-book and device totals,
+sessions, reading time, pages turned, WPM, time-left estimates, daily history,
+heatmap, current/best streaks, completion celebrations, and finished-book history.
+Credits belong to XPoint, CrossInk, and YACP; these statistics are inherited,
+not newly implemented by this branch.
+
+**Installation, operation, limitations, and verification:**
+[Custom firmware guide](docs/flibusta-x4pro.md).
+
+Updates for this custom build use an **SD-card firmware file**. Online firmware
+checks are disabled so an upstream release cannot replace the custom build.
+The default build target is `x4pro-gh_release`:
+
+```sh
+git submodule update --init --recursive
+pio run -e x4pro-gh_release
+```
+
+The resulting application image is `.pio/build/x4pro-gh_release/firmware.bin`.
+It is for the X4 Pro (ESP32-S3), not the original X4/X3 (ESP32-C3).
+
+## Inherited XPoint features
 
 | Device family | SoC | Supported |
 |---|---|---|

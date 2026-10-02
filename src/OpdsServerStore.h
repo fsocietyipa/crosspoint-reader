@@ -20,6 +20,7 @@ struct OpdsServer {
 class OpdsServerStore : public PersistableStore<OpdsServerStore> {
  private:
   std::vector<OpdsServer> servers;
+  bool flibustaPresetApplied = false;
 
   static constexpr size_t MAX_SERVERS = 8;
 
@@ -31,6 +32,8 @@ class OpdsServerStore : public PersistableStore<OpdsServerStore> {
   static const char* getFilePath() { return "/.crosspoint/opds.json"; }
   void toJson(JsonDocument& doc) const;
   bool fromJson(JsonVariantConst doc);
+  // Boot-only migration: preserves configured servers and intentional deletion.
+  bool ensureFlibustaPreset();
 
   bool addServer(const OpdsServer& server);
   bool updateServer(size_t index, const OpdsServer& server);
